@@ -1,13 +1,24 @@
 :root {
-  --bg: #f9fafb;
-  --white: #ffffff;
-  --ink: #111827;
-  --ink2: #374151;
-  --border: #e5e7eb;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
   --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --font: "Inter", sans-serif;
+  --accent-hover: #1d4ed8; /* <-- O BEM DITO CULPADO QUE FAZIA O BOTÃO SUMIR */
+  --border: #e2e8f0;
+  --font-size-base: 15px;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: #334155;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -15,129 +26,113 @@
 }
 body {
   background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font);
+  color: var(--text-main);
+  font-family: "Inter", sans-serif;
+  font-size: var(--font-size-base);
   line-height: 1.6;
+  transition: background 0.3s ease;
   padding-bottom: 60px;
 }
 .container {
-  max-width: 900px;
+  max-width: 850px;
   margin: 0 auto;
   padding: 40px 20px;
 }
 
-/* Headers */
 header {
-  margin-bottom: 40px;
+  margin-bottom: 50px;
   text-align: center;
 }
 header h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 10px;
-  letter-spacing: -0.03em;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
 }
 header p {
-  color: var(--ink2);
-  font-size: 1.1rem;
-}
-.back-link {
-  display: inline-block;
-  margin-bottom: 20px;
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-.back-link:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
+  color: var(--text-muted);
+  font-size: 1rem;
 }
 
-/* Semestres & Grid */
 .semester-section {
-  margin-bottom: 45px;
+  margin-bottom: 40px;
 }
 .semester-title {
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--ink);
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--border);
-  letter-spacing: -0.02em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
 .grid-materias {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
 }
-
-/* Cards Genéricos */
 .card-materia {
-  background: var(--white);
+  background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 10px;
+  padding: 20px;
   text-decoration: none;
   color: inherit;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .card-materia:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transform: translateY(-3px);
   border-color: var(--accent);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
 }
 .card-materia.disabled {
-  opacity: 0.6;
-  pointer-events: none;
-  background: #f3f4f6;
+  opacity: 0.5;
+  cursor: not-allowed;
   border-style: dashed;
 }
 .card-materia h2 {
-  font-size: 1.15rem;
-  margin-bottom: 8px;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
   font-weight: 700;
 }
 .card-materia p {
   font-size: 0.9rem;
-  color: var(--ink2);
-  flex-grow: 1;
+  color: var(--text-muted);
 }
 
-/* Lista de Aulas (Página da Matéria) */
+/* Listagem de Aulas */
 .list-aulas {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 .aula-item {
-  background: var(--white);
+  background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 10px;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  transition: box-shadow 0.2s;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
 }
-.aula-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.aula-info h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
-@media (max-width: 600px) {
-  .aula-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.aula-info p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
 }
 .aula-badge {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   background: #eff6ff;
@@ -145,37 +140,46 @@ header p {
   padding: 4px 10px;
   border-radius: 100px;
   margin-bottom: 8px;
-  letter-spacing: 0.05em;
-}
-.aula-info h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-.aula-info p {
-  font-size: 0.95rem;
-  color: var(--ink2);
 }
 
-/* Botões */
+.back-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+.back-link:hover {
+  text-decoration: underline;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
+  padding: 8px 18px;
   border-radius: 8px;
   font-weight: 600;
   text-decoration: none;
   transition: background 0.2s;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
   border: none;
   white-space: nowrap;
 }
 .btn-primary {
   background: var(--accent);
-  color: var(--white);
+  color: #fff;
 }
 .btn-primary:hover {
   background: var(--accent-hover);
+}
+
+@media (max-width: 600px) {
+  .aula-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
 }
