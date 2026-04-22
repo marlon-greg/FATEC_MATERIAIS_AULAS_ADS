@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tópicos Especiais em Informática - ADS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f9fafb;
+        --white: #ffffff;
+        --ink: #111827;
+        --ink2: #374151;
+        --border: #e5e7eb;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --font: "Inter", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font);
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      header {
+        margin-bottom: 40px;
+        text-align: center;
+      }
+      header h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        letter-spacing: -0.03em;
+      }
+      header p {
+        color: var(--ink2);
+        font-size: 1.05rem;
+      }
+      .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      .list-aulas {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .aula-item {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        transition: box-shadow 0.2s;
+      }
+      .aula-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      @media (max-width: 600px) {
+        .aula-item {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+      .aula-badge {
+        display: inline-block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: #eff6ff;
+        color: var(--accent);
+        padding: 4px 10px;
+        border-radius: 100px;
+        margin-bottom: 8px;
+      }
+      .aula-info h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .aula-info p {
+        font-size: 0.95rem;
+        color: var(--ink2);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s;
+        font-size: 0.95rem;
+        cursor: pointer;
+        border: none;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        background: var(--accent-hover);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <a href="../index.html" class="back-link">← Voltar para o Portal</a>
+        <h1>Tópicos Especiais em Informática</h1>
+        <p>Curso de ADS · 6º Semestre</p>
+      </header>
+      <main class="list-aulas">
+        <div class="aula-item">
+          <div class="aula-info">
+            <span class="aula-badge">Aula 22/04/2026</span>
+            <h3>Tecnologias Disruptivas & IA</h3>
+            <p>
+              Como a IA está reescrevendo as regras do mercado, as profissões e
+              o dia a dia do desenvolvedor.
+            </p>
+          </div>
+          <div class="aula-actions">
+            <a
+              href="aula-22-04-2026-tecnologias-disruptivas.html"
+              class="btn btn-primary"
+              >Acessar Aula</a
+            >
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

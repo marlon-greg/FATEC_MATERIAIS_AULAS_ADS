@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal de Matérias - ADS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f9fafb;
+        --white: #ffffff;
+        --ink: #111827;
+        --ink2: #374151;
+        --border: #e5e7eb;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --font: "Inter", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font);
+        line-height: 1.6;
+        padding-bottom: 60px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      header {
+        margin-bottom: 40px;
+        text-align: center;
+      }
+      header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        letter-spacing: -0.03em;
+      }
+      header p {
+        color: var(--ink2);
+        font-size: 1.1rem;
+      }
+      .semester-section {
+        margin-bottom: 40px;
+      }
+      .semester-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border);
+      }
+      .grid-materias {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .card-materia {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        text-decoration: none;
+        color: inherit;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+      }
+      .card-materia:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border-color: var(--accent);
+      }
+      .card-materia.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        background: #f3f4f6;
+      }
+      .card-materia h2 {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+      .card-badge {
+        display: table;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: #eff6ff;
+        color: var(--accent);
+        padding: 4px 10px;
+        border-radius: 100px;
+        margin-bottom: 12px;
+      }
+      .card-materia.disabled .card-badge {
+        background: #e5e7eb;
+        color: #6b7280;
+      }
+      .card-materia p {
+        font-size: 0.9rem;
+        color: var(--ink2);
+        flex-grow: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Portal de Matérias</h1>
+        <p>Curso de Análise e Desenvolvimento de Sistemas (ADS)</p>
+      </header>
+
+      <div class="semester-section">
+        <h2 class="semester-title">1º ao 5º Semestre</h2>
+        <div class="grid-materias">
+          <div class="card-materia disabled">
+            <span class="card-badge">1º Semestre</span>
+            <h2>Matérias em breve</h2>
+            <p>Conteúdos serão adicionados futuramente.</p>
+          </div>
+          <div class="card-materia disabled">
+            <span class="card-badge">2º Semestre</span>
+            <h2>Matérias em breve</h2>
+            <p>Conteúdos serão adicionados futuramente.</p>
+          </div>
+          <div class="card-materia disabled">
+            <span class="card-badge">3º Semestre</span>
+            <h2>Matérias em breve</h2>
+            <p>Conteúdos serão adicionados futuramente.</p>
+          </div>
+          <div class="card-materia disabled">
+            <span class="card-badge">4º Semestre</span>
+            <h2>Matérias em breve</h2>
+            <p>Conteúdos serão adicionados futuramente.</p>
+          </div>
+          <div class="card-materia disabled">
+            <span class="card-badge">5º Semestre</span>
+            <h2>Matérias em breve</h2>
+            <p>Conteúdos serão adicionados futuramente.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="semester-section">
+        <h2 class="semester-title">6º Semestre</h2>
+        <div class="grid-materias">
+          <a href="topicos-especiais/index.html" class="card-materia">
+            <span class="card-badge">6º Semestre</span>
+            <h2>Tópicos Especiais em Informática</h2>
+            <p>
+              Discussões avançadas sobre o mercado, IA, disrupção e o futuro do
+              desenvolvimento.
+            </p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

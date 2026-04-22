@@ -1,0 +1,2717 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Tecnologias Disruptivas & IA — ADS 6º Sem</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --bg: #f7f6f2;
+        --white: #fff;
+        --ink: #0e0e0e;
+        --ink2: #3a3a3a;
+        --muted: #777;
+        --border: #e2e1dd;
+        --accent: #d94f1e;
+        --accent2: #1a6b5e;
+        --yellow: #f5c400;
+        --font-h: "Inter", sans-serif;
+        --font-b: "Inter", sans-serif;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        font-family: var(--font-b);
+        color: var(--ink);
+      }
+
+      /* ENGINE */
+      .deck {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.4s ease,
+          transform 0.4s ease;
+        transform: translateX(60px);
+        overflow: hidden;
+      }
+      .slide.active {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateX(0);
+      }
+      .slide.out {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
+      .s-inner {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        display: flex;
+        flex-direction: column;
+        padding: 40px 64px 88px;
+      }
+      @media (max-width: 700px) {
+        .s-inner {
+          padding: 24px 18px 88px;
+        }
+      }
+
+      /* CONTROLS */
+      #progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 4px;
+        background: var(--accent);
+        transition: width 0.4s ease;
+        z-index: 999;
+      }
+      #slide-controls {
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        display: flex;
+        gap: 10px;
+        z-index: 999;
+      }
+      .ctrl-btn {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border);
+        background: var(--white);
+        cursor: pointer;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 14px rgba(0, 0, 0, 0.1);
+        transition:
+          background 0.2s,
+          transform 0.15s;
+        color: var(--ink2);
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      .ctrl-btn:hover,
+      .ctrl-btn:active {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+        transform: scale(1.08);
+      }
+      #slide-counter {
+        position: fixed;
+        bottom: 28px;
+        left: 20px;
+        font-size: 14px;
+        font-family: var(--font-h);
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        z-index: 999;
+      }
+      #slide-counter span {
+        color: var(--ink);
+      }
+
+      /* ACTION BUTTONS (Home / PDF) */
+      .action-buttons {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 12px;
+        z-index: 999;
+      }
+      .btn-action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: var(--white);
+        color: var(--ink);
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s;
+        font-family: var(--font-b);
+      }
+      .btn-action:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      /* HELPERS */
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 14px;
+        flex-shrink: 0;
+      }
+      .tag::after {
+        content: "";
+        width: 30px;
+        height: 2px;
+        background: var(--accent);
+        display: inline-block;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-h);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+      .src-note {
+        font-size: 13px;
+        color: var(--muted);
+        font-style: italic;
+        margin-top: 6px;
+      }
+
+      /* REVEAL */
+      .rev {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.45s ease,
+          transform 0.45s ease;
+        pointer-events: none;
+      }
+      .rev.rev-done {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .reveal-hint {
+        position: absolute;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 13px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        animation: pulse 2s ease-in-out infinite;
+        white-space: nowrap;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.35;
+        }
+        50% {
+          opacity: 0.9;
+        }
+      }
+      .reveal-hint.done {
+        display: none;
+      }
+
+      /* S0 CAPA */
+      #s0 {
+        background: var(--ink);
+        color: #fff;
+        justify-content: flex-end;
+      }
+      #s0 .bg-grid {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 60px 60px;
+      }
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        pointer-events: none;
+      }
+      .blob1 {
+        width: 500px;
+        height: 500px;
+        top: -120px;
+        right: -80px;
+        background: rgba(217, 79, 30, 0.22);
+      }
+      .blob2 {
+        width: 400px;
+        height: 400px;
+        bottom: -100px;
+        left: -60px;
+        background: rgba(26, 107, 94, 0.18);
+      }
+      @media (max-width: 700px) {
+        .blob1 {
+          width: 240px;
+          height: 240px;
+        }
+        .blob2 {
+          width: 180px;
+          height: 180px;
+        }
+      }
+      #s0 .cover-inner {
+        position: relative;
+        z-index: 2;
+        padding: 50px 64px;
+      }
+      @media (max-width: 700px) {
+        #s0 .cover-inner {
+          padding: 30px 20px 48px;
+        }
+      }
+      #s0 .eyebrow {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 18px;
+      }
+      #s0 h1 {
+        font-size: clamp(44px, 9vw, 100px);
+        font-weight: 900;
+        line-height: 0.95;
+        color: #fff;
+        margin-bottom: 20px;
+      }
+      #s0 h1 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      #s0 .sub {
+        font-size: clamp(16px, 2vw, 20px);
+        color: rgba(255, 255, 255, 0.5);
+        max-width: 500px;
+        line-height: 1.6;
+        font-weight: 300;
+        margin-bottom: 36px;
+      }
+      .topics-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        max-width: 820px;
+      }
+      .topic-chip {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 100px;
+        padding: 8px 18px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.62);
+        background: rgba(255, 255, 255, 0.05);
+        white-space: nowrap;
+      }
+
+      /* S1 ABERTURA */
+      #s1 {
+        background: var(--white);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .big-q {
+        font-family: var(--font-h);
+        font-size: clamp(34px, 7vw, 80px);
+        font-weight: 900;
+        line-height: 1.02;
+        color: var(--ink);
+        max-width: 800px;
+        margin: 0 auto 22px;
+      }
+      .big-q em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      .sub-q {
+        font-size: clamp(17px, 2.2vw, 22px);
+        color: var(--muted);
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.6;
+        font-weight: 300;
+      }
+
+      /* S2 DISRUPCAO - palavra */
+      #s2 {
+        background: var(--bg);
+      }
+      .word-hero {
+        font-family: var(--font-h);
+        font-size: clamp(60px, 12vw, 140px);
+        font-weight: 900;
+        line-height: 0.9;
+        color: var(--accent);
+        margin-bottom: 24px;
+        letter-spacing: -0.04em;
+      }
+      .word-def {
+        font-size: clamp(18px, 2.2vw, 24px);
+        color: var(--ink2);
+        line-height: 1.7;
+        max-width: 780px;
+      }
+      .word-def strong {
+        color: var(--ink);
+      }
+      .word-origin {
+        margin-top: 20px;
+        font-size: clamp(15px, 1.7vw, 18px);
+        color: var(--muted);
+        line-height: 1.6;
+        font-style: italic;
+        border-left: 3px solid var(--accent);
+        padding-left: 16px;
+      }
+
+      /* S3 DOIS TIPOS */
+      #s3 {
+        background: var(--white);
+      }
+      .def-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 16px;
+      }
+      @media (max-width: 680px) {
+        .def-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .def-card {
+        border-radius: 18px;
+        padding: 32px;
+      }
+      .def-card.sust {
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+      }
+      .def-card.disr {
+        background: var(--ink);
+        color: #fff;
+      }
+      .def-card .dc-icon {
+        font-size: 38px;
+        margin-bottom: 16px;
+      }
+      .def-card h3 {
+        font-size: clamp(20px, 2.4vw, 26px);
+        margin-bottom: 12px;
+      }
+      .def-card.disr h3 {
+        color: #fff;
+      }
+      .def-card p {
+        font-size: clamp(16px, 1.8vw, 19px);
+        line-height: 1.65;
+      }
+      .def-card.sust p {
+        color: var(--ink2);
+      }
+      .def-card.disr p {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .def-card .ex {
+        margin-top: 16px;
+        font-size: clamp(14px, 1.5vw, 16px);
+        padding: 14px 16px;
+        border-radius: 10px;
+        line-height: 1.5;
+      }
+      .def-card.sust .ex {
+        background: var(--white);
+        color: var(--muted);
+      }
+      .def-card.disr .ex {
+        background: rgba(255, 255, 255, 0.07);
+        color: rgba(255, 255, 255, 0.55);
+      }
+
+      /* S4 EXEMPLOS */
+      #s4 {
+        background: var(--bg);
+      }
+      .ex-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      @media (max-width: 700px) {
+        .ex-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .ex-card {
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        background: var(--white);
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+      .ex-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .ex-card .ico {
+        font-size: 30px;
+        flex-shrink: 0;
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        border-radius: 12px;
+      }
+      .ex-card h3 {
+        font-size: clamp(17px, 1.9vw, 21px);
+        margin-bottom: 6px;
+      }
+      .ex-card p {
+        font-size: clamp(14px, 1.6vw, 17px);
+        color: var(--ink2);
+        line-height: 1.55;
+      }
+      .ex-card .nota {
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      /* S5 LINHA DO TEMPO */
+      #s5 {
+        background: var(--white);
+      }
+      .eras {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 16px;
+      }
+      @media (max-width: 860px) {
+        .eras {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .eras {
+          grid-template-columns: 1fr;
+        }
+      }
+      .era-card {
+        border-radius: 16px;
+        padding: 24px 20px;
+        border: 1.5px solid var(--border);
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .era-card.now {
+        background: var(--ink);
+        border-color: var(--ink);
+      }
+      .era-card .period {
+        font-family: var(--font-h);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent);
+      }
+      .era-card.now .period {
+        color: var(--yellow);
+      }
+      .era-card h3 {
+        font-size: clamp(16px, 1.7vw, 19px);
+        line-height: 1.2;
+      }
+      .era-card.now h3 {
+        color: #fff;
+      }
+      .era-card p {
+        font-size: clamp(14px, 1.5vw, 16px);
+        color: var(--ink2);
+        line-height: 1.55;
+        flex: 1;
+      }
+      .era-card.now p {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .era-card .sabia {
+        font-size: clamp(13px, 1.3vw, 15px);
+        color: var(--ink2);
+        font-style: italic;
+        background: var(--white);
+        border-radius: 8px;
+        padding: 10px 12px;
+        line-height: 1.45;
+      }
+      .era-card.now .sabia {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .era-card .badge {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 100px;
+        width: fit-content;
+        background: rgba(217, 79, 30, 0.1);
+        color: var(--accent);
+      }
+      .era-card.now .badge {
+        background: rgba(245, 196, 0, 0.15);
+        color: var(--yellow);
+      }
+
+      /* S6 GRÁFICO */
+      #s6 {
+        background: var(--bg);
+      }
+      .chart-intro {
+        font-size: clamp(16px, 1.8vw, 19px);
+        color: var(--ink2);
+        max-width: 700px;
+        line-height: 1.65;
+        margin-bottom: 22px;
+      }
+      .compare-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .bar-label {
+        width: 220px;
+        flex-shrink: 0;
+        font-size: clamp(14px, 1.5vw, 16px);
+        font-weight: 500;
+        color: var(--ink2);
+        text-align: right;
+      }
+      @media (max-width: 700px) {
+        .bar-label {
+          width: 110px;
+          font-size: 12px;
+        }
+      }
+      .bar-track {
+        flex: 1;
+        height: 46px;
+        background: var(--white);
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        padding-left: 16px;
+        font-size: clamp(14px, 1.5vw, 16px);
+        font-weight: 700;
+        color: #fff;
+        min-width: 44px;
+        width: 0;
+        opacity: 0;
+        transition:
+          width 1.1s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.3s ease;
+      }
+      .bar-fill.bar-active {
+        opacity: 1;
+      }
+      .bar-fill.lav {
+        background: #9b72cf;
+      }
+      .bar-fill.org {
+        background: var(--accent);
+      }
+      .bar-fill.tea {
+        background: var(--accent2);
+      }
+      .bar-fill.ink2c {
+        background: #444;
+      }
+      .bar-fill.yel {
+        background: #b08c00;
+        color: #fff;
+      }
+      .bar-src {
+        width: 140px;
+        flex-shrink: 0;
+        font-size: 12px;
+        color: var(--muted);
+        font-style: italic;
+      }
+      @media (max-width: 700px) {
+        .bar-src {
+          display: none;
+        }
+      }
+
+      /* S7 IA NAS ÁREAS */
+      #s7 {
+        background: var(--white);
+      }
+      .area-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 14px;
+      }
+      @media (max-width: 860px) {
+        .area-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .area-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .area-card {
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 22px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+      .area-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .area-card .a-icon {
+        font-size: 30px;
+        margin-bottom: 10px;
+      }
+      .area-card h3 {
+        font-size: clamp(17px, 1.8vw, 20px);
+        margin-bottom: 8px;
+      }
+      .area-card p {
+        font-size: clamp(14px, 1.5vw, 16px);
+        color: var(--ink2);
+        line-height: 1.55;
+        margin-bottom: 10px;
+      }
+      .headline {
+        background: var(--white);
+        border-left: 3px solid var(--accent);
+        padding: 8px 12px;
+        border-radius: 0 8px 8px 0;
+        font-size: clamp(12px, 1.3vw, 14px);
+        color: var(--ink2);
+        font-style: italic;
+        line-height: 1.45;
+      }
+
+      /* S8 IMPACTO */
+      #s8 {
+        background: var(--bg);
+      }
+      .impact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 16px;
+      }
+      @media (max-width: 780px) {
+        .impact-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .before-after {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .ba-row {
+        display: grid;
+        grid-template-columns: 1fr 28px 1fr;
+        align-items: center;
+        gap: 8px;
+      }
+      @media (max-width: 500px) {
+        .ba-row {
+          grid-template-columns: 1fr;
+        }
+        .ba-arrow {
+          display: none;
+        }
+      }
+      .ba-box {
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: clamp(14px, 1.5vw, 17px);
+        line-height: 1.45;
+      }
+      .ba-box.before {
+        background: var(--white);
+        color: var(--ink2);
+        border: 1px solid var(--border);
+      }
+      .ba-box.after {
+        background: rgba(26, 107, 94, 0.08);
+        color: var(--accent2);
+        border: 1px solid rgba(26, 107, 94, 0.2);
+        font-weight: 500;
+      }
+      .ba-arrow {
+        text-align: center;
+        color: var(--muted);
+        font-size: 18px;
+      }
+      .stat-col {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        border-left: 1.5px solid var(--border);
+        padding-left: 28px;
+      }
+      @media (max-width: 780px) {
+        .stat-col {
+          border-left: none;
+          border-top: 1.5px solid var(--border);
+          padding-left: 0;
+          padding-top: 20px;
+        }
+      }
+      .stat-num {
+        font-family: var(--font-h);
+        font-size: clamp(40px, 5.5vw, 62px);
+        font-weight: 900;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .stat-desc {
+        font-size: clamp(15px, 1.6vw, 17px);
+        color: var(--ink2);
+        margin-top: 4px;
+        line-height: 1.5;
+      }
+      .stat-src {
+        font-size: 13px;
+        color: var(--muted);
+        font-style: italic;
+        margin-top: 4px;
+      }
+
+      /* S9 FUTURO */
+      #s9 {
+        background: var(--white);
+      }
+      .future-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 14px;
+      }
+      @media (max-width: 860px) {
+        .future-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .future-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .fut-card {
+        border-radius: 16px;
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .fut-card.a {
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+      }
+      .fut-card.b {
+        background: var(--ink);
+        color: #fff;
+      }
+      .fut-card.c {
+        background: rgba(217, 79, 30, 0.07);
+        border: 1.5px solid rgba(217, 79, 30, 0.2);
+      }
+      .fut-card .f-year {
+        font-family: var(--font-h);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent);
+      }
+      .fut-card.b .f-year {
+        color: var(--yellow);
+      }
+      .fut-card .f-num {
+        font-family: var(--font-h);
+        font-size: clamp(38px, 4.5vw, 52px);
+        font-weight: 900;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .fut-card.b .f-num {
+        color: var(--yellow);
+      }
+      .fut-card h3 {
+        font-size: clamp(16px, 1.7vw, 19px);
+        line-height: 1.2;
+      }
+      .fut-card.b h3 {
+        color: #fff;
+      }
+      .fut-card p {
+        font-size: clamp(14px, 1.5vw, 16px);
+        color: var(--ink2);
+        line-height: 1.55;
+      }
+      .fut-card.b p {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .fut-footer {
+        margin-top: 16px;
+        padding: 16px 22px;
+        background: var(--bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: clamp(15px, 1.6vw, 17px);
+        color: var(--ink2);
+        display: flex;
+        gap: 14px;
+        align-items: center;
+      }
+      .fut-footer strong {
+        color: var(--accent);
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+
+      /* S10 PROFISSOES IA */
+      #s10 {
+        background: var(--bg);
+      }
+      .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 14px;
+      }
+      @media (max-width: 860px) {
+        .jobs-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .jobs-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .job-card {
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 22px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+      .job-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .job-card .j-icon {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+      .job-card h3 {
+        font-size: clamp(16px, 1.7vw, 19px);
+        margin-bottom: 6px;
+      }
+      .job-card .demand {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 4px 10px;
+        border-radius: 100px;
+        width: fit-content;
+        margin-bottom: 10px;
+        background: rgba(217, 79, 30, 0.1);
+        color: var(--accent);
+      }
+      .job-card p {
+        font-size: clamp(13px, 1.4vw, 15px);
+        color: var(--ink2);
+        line-height: 1.55;
+      }
+      .job-note {
+        margin-top: 20px;
+        background: var(--white);
+        border-left: 3px solid var(--accent2);
+        padding: 14px 18px;
+        border-radius: 0 12px 12px 0;
+        font-size: clamp(15px, 1.6vw, 17px);
+        color: var(--ink2);
+        line-height: 1.6;
+      }
+
+      /* S11 AGENTES IA DEV */
+      #s11 {
+        background: var(--ink);
+        color: #fff;
+      }
+      .agent-intro {
+        font-size: clamp(16px, 1.9vw, 20px);
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.65;
+        max-width: 700px;
+        margin-bottom: 24px;
+      }
+      .agent-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 4px;
+      }
+      @media (max-width: 760px) {
+        .agent-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .agent-box {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 26px;
+      }
+      .agent-box h3 {
+        font-size: clamp(18px, 2vw, 22px);
+        margin-bottom: 14px;
+        color: #fff;
+      }
+      .agent-box ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .agent-box ul li {
+        font-size: clamp(14px, 1.5vw, 17px);
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.5;
+        padding-left: 18px;
+        position: relative;
+      }
+      .agent-box ul li::before {
+        content: "›";
+        position: absolute;
+        left: 0;
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 18px;
+        line-height: 1.3;
+      }
+      .agent-highlight {
+        margin-top: 20px;
+        background: rgba(245, 196, 0, 0.1);
+        border: 1px solid rgba(245, 196, 0, 0.25);
+        border-radius: 12px;
+        padding: 18px 22px;
+        font-size: clamp(15px, 1.6vw, 18px);
+        color: var(--yellow);
+        line-height: 1.6;
+      }
+
+      /* S12 GUIA FERRAMENTAS */
+      #s12 {
+        background: var(--white);
+      }
+      .ai-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 14px;
+      }
+      @media (max-width: 860px) {
+        .ai-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 480px) {
+        .ai-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .ai-card {
+        border-radius: 16px;
+        padding: 22px;
+        border: 1.5px solid var(--border);
+        background: var(--bg);
+        transition:
+          transform 0.2s,
+          border-color 0.2s;
+      }
+      .ai-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--accent);
+      }
+      .ai-card .ai-name {
+        font-family: var(--font-h);
+        font-size: clamp(18px, 2vw, 22px);
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .ai-card .ai-tag {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 4px 10px;
+        border-radius: 100px;
+        width: fit-content;
+        margin-bottom: 12px;
+      }
+      .ai-card p {
+        font-size: clamp(14px, 1.5vw, 16px);
+        color: var(--ink2);
+        line-height: 1.55;
+      }
+      .ai-card .best-for {
+        margin-top: 10px;
+        font-size: clamp(13px, 1.4vw, 15px);
+        font-weight: 600;
+        color: var(--accent);
+      }
+      .ai-gpt .ai-tag {
+        background: #d4edda;
+        color: #1a6b3c;
+      }
+      .ai-claude .ai-tag {
+        background: #fde8d8;
+        color: #8c3000;
+      }
+      .ai-gemini .ai-tag {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      .ai-copilot .ai-tag {
+        background: #e0e7ff;
+        color: #3730a3;
+      }
+      .ai-midj .ai-tag {
+        background: #f3e8ff;
+        color: #6b21a8;
+      }
+      .ai-leo .ai-tag {
+        background: #fff3cd;
+        color: #92400e;
+      }
+
+      /* S13 ATIVIDADE */
+      #s13 {
+        background: var(--ink);
+        color: #fff;
+      }
+      .act-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 26px;
+        margin-top: 8px;
+      }
+      @media (max-width: 760px) {
+        .act-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .act-grid .left h2 {
+        font-size: clamp(28px, 5vw, 56px);
+        color: #fff;
+        margin-bottom: 14px;
+      }
+      .act-grid .left h2 em {
+        font-style: normal;
+        color: var(--yellow);
+      }
+      .act-grid .left p {
+        font-size: clamp(15px, 1.6vw, 18px);
+        color: rgba(255, 255, 255, 0.56);
+        line-height: 1.65;
+      }
+      .sectors {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .sec-chip {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 100px;
+        padding: 7px 14px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .act-right {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        padding: 24px;
+      }
+      .act-right h3 {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .step-list-s {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .step-list-s li {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        font-size: clamp(14px, 1.5vw, 17px);
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.5;
+      }
+      .step-list-s .n {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2px;
+      }
+      .entrega-box {
+        margin-top: 18px;
+        background: rgba(245, 196, 0, 0.1);
+        border: 1px solid rgba(245, 196, 0, 0.25);
+        border-radius: 12px;
+        padding: 14px 18px;
+      }
+      .entrega-box .e-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--yellow);
+        margin-bottom: 6px;
+        font-weight: 700;
+      }
+      .entrega-box p {
+        font-size: clamp(13px, 1.4vw, 15px);
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.55;
+      }
+
+      /* S14 DEBATE */
+      #s14 {
+        background: var(--bg);
+      }
+      .debate-cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 14px;
+      }
+      @media (max-width: 680px) {
+        .debate-cols {
+          grid-template-columns: 1fr;
+        }
+      }
+      .deb-col {
+        border-radius: 16px;
+        padding: 26px;
+      }
+      .deb-col.pro {
+        background: rgba(26, 107, 94, 0.06);
+        border: 1.5px solid rgba(26, 107, 94, 0.2);
+      }
+      .deb-col.contra {
+        background: rgba(217, 79, 30, 0.06);
+        border: 1.5px solid rgba(217, 79, 30, 0.2);
+      }
+      .deb-col h3 {
+        font-size: clamp(18px, 2vw, 22px);
+        margin-bottom: 14px;
+      }
+      .deb-col.pro h3 {
+        color: var(--accent2);
+      }
+      .deb-col.contra h3 {
+        color: var(--accent);
+      }
+      .deb-col ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .deb-col ul li {
+        font-size: clamp(15px, 1.6vw, 18px);
+        color: var(--ink2);
+        line-height: 1.5;
+        padding-left: 18px;
+        position: relative;
+      }
+      .deb-col ul li::before {
+        content: "›";
+        position: absolute;
+        left: 0;
+        color: var(--muted);
+      }
+      .closing-q {
+        margin-top: 18px;
+        background: var(--ink);
+        border-radius: 14px;
+        padding: 22px 26px;
+      }
+      .closing-q .cq-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: rgba(255, 255, 255, 0.38);
+        margin-bottom: 8px;
+      }
+      .closing-q p {
+        font-size: clamp(16px, 1.8vw, 20px);
+        font-weight: 300;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      /* S16 FIM (Original S15 mudou para S16) */
+      #s16 {
+        background: var(--ink);
+        color: #fff;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      #s16 .bg-grid2 {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+      }
+      #s16 .close-inner {
+        position: relative;
+        z-index: 2;
+        max-width: 700px;
+        padding: 30px 24px;
+      }
+      .big-close {
+        font-family: var(--font-h);
+        font-size: clamp(32px, 6.5vw, 72px);
+        font-weight: 900;
+        line-height: 1.05;
+        color: #fff;
+        margin-bottom: 24px;
+      }
+      .big-close em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      #s16 p {
+        font-size: clamp(16px, 1.8vw, 20px);
+        color: rgba(255, 255, 255, 0.46);
+        line-height: 1.7;
+        font-weight: 300;
+      }
+      .tools {
+        display: flex;
+        gap: 9px;
+        justify-content: center;
+        margin-top: 28px;
+        flex-wrap: wrap;
+      }
+      .tool-chip {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 100px;
+        padding: 8px 18px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* PRINT MODE (Gerador de PDF) */
+      @media print {
+        html,
+        body {
+          height: auto !important;
+          overflow: visible !important;
+          background: var(--bg) !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .deck {
+          width: 100% !important;
+          height: auto !important;
+          position: static !important;
+          display: block !important;
+        }
+        .slide {
+          position: relative !important;
+          width: 100% !important;
+          height: 100vh !important;
+          opacity: 1 !important;
+          transform: none !important;
+          display: flex !important;
+          page-break-after: always !important;
+          page-break-inside: avoid !important;
+          overflow: hidden !important;
+        }
+        #slide-controls,
+        #slide-counter,
+        #progress-bar,
+        .action-buttons,
+        .reveal-hint {
+          display: none !important;
+        }
+        .rev {
+          opacity: 1 !important;
+          transform: none !important;
+          pointer-events: auto !important;
+        }
+        .s-inner {
+          overflow: visible !important;
+          height: 100% !important;
+        }
+
+        /* Cores forçadas para PDF perfeito */
+        #s0,
+        #s11,
+        #s16 {
+          background: #f8fafc !important;
+          color: black !important;
+        }
+        #s0 .sub {
+          color: #475569 !important;
+        }
+        .card,
+        .def-card,
+        .ex-card,
+        .era-card,
+        .area-card,
+        .ba-box,
+        .fut-card,
+        .job-card,
+        .agent-box,
+        .ai-card,
+        .act-right,
+        .deb-col {
+          break-inside: avoid;
+          border-color: #cbd5e1 !important;
+        }
+
+        /* Consertando os gráficos de barra do slide 6 na impressão */
+        .bar-row[data-w="100"] .bar-fill {
+          width: 100% !important;
+          opacity: 1 !important;
+        }
+        .bar-row[data-w="72"] .bar-fill {
+          width: 72% !important;
+          opacity: 1 !important;
+        }
+        .bar-row[data-w="50"] .bar-fill {
+          width: 50% !important;
+          opacity: 1 !important;
+        }
+        .bar-row[data-w="28"] .bar-fill {
+          width: 28% !important;
+          opacity: 1 !important;
+        }
+        .bar-row[data-w="20"] .bar-fill {
+          width: 20% !important;
+          opacity: 1 !important;
+        }
+        .bar-row[data-w="5"] .bar-fill {
+          width: 5% !important;
+          opacity: 1 !important;
+        }
+        .bar-row[data-label="68 anos"] .bar-fill::after {
+          content: " 68 anos";
+        }
+        .bar-row[data-label="~13 anos"] .bar-fill::after {
+          content: " ~13 anos";
+        }
+        .bar-row[data-label="7 anos"] .bar-fill::after {
+          content: " 7 anos";
+        }
+        .bar-row[data-label="3,5 anos"] .bar-fill::after {
+          content: " 3,5 anos";
+        }
+        .bar-row[data-label="2,5 anos"] .bar-fill::after {
+          content: " 2,5 anos";
+        }
+        .bar-row[data-label="2 meses"] .bar-fill::after {
+          content: " 2 meses";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="action-buttons">
+      <a href="index.html" class="btn-action">🏠 Voltar</a>
+      <button
+        onclick="window.print()"
+        class="btn-action"
+        title="Gera o arquivo PDF da aula em específico"
+      >
+        📄 Baixar PDF
+      </button>
+    </div>
+
+    <div id="progress-bar"></div>
+    <div id="slide-counter">
+      <span id="cur">1</span> / <span id="tot"></span>
+    </div>
+    <div id="slide-controls">
+      <button class="ctrl-btn" id="btn-prev">←</button>
+      <button class="ctrl-btn" id="btn-next">→</button>
+    </div>
+
+    <div class="deck">
+      <div class="slide active" id="s0">
+        <div class="bg-grid"></div>
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+        <div class="cover-inner">
+          <p class="eyebrow">ADS · 6º Semestre · Tecnologias Disruptivas</p>
+          <h1>Tecnologias<br /><em>Disruptivas</em><br />& IA</h1>
+          <p class="sub">
+            Do saber digitar ao saber pensar — como a IA está reescrevendo as
+            regras do mercado e das profissões.
+          </p>
+          <div class="topics-bar">
+            <div class="topic-chip">O que é disrupção</div>
+            <div class="topic-chip">Os dois tipos de tecnologia</div>
+            <div class="topic-chip">Exemplos do mundo real</div>
+            <div class="topic-chip">A evolução das competências</div>
+            <div class="topic-chip">Dados de adoção</div>
+            <div class="topic-chip">IA nas áreas</div>
+            <div class="topic-chip">Impacto no trabalho</div>
+            <div class="topic-chip">O futuro e as novas profissões</div>
+            <div class="topic-chip">O papel do dev</div>
+            <div class="topic-chip">Guia de ferramentas</div>
+            <div class="topic-chip">Atividade em grupo</div>
+            <div class="topic-chip">Debate</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide" id="s1">
+        <div
+          style="
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 36px 24px;
+          "
+        >
+          <div class="tag">Para começar</div>
+          <div class="big-q">
+            Quantos de vocês já<br />usaram alguma <em>IA</em><br />essa semana?
+          </div>
+          <p class="sub-q">
+            ChatGPT, Copilot, Gemini, Perplexity, Midjourney...<br />Pra
+            estudar, trabalhar ou resolver qualquer coisa.
+          </p>
+        </div>
+      </div>
+
+      <div class="slide" id="s2">
+        <div class="s-inner">
+          <div class="tag">Antes de tudo</div>
+          <div class="word-hero rev">Disrupção.</div>
+          <div class="word-def rev">
+            Você provavelmente já ouviu — mas o que significa de verdade?<br /><br />
+            <strong>Disrupção</strong> vem do latim <em>disruptio</em>, que
+            significa "rompimento" ou "quebra". No contexto de negócios e
+            tecnologia, é usada para descrever uma mudança que
+            <strong
+              >não apenas melhora algo, mas quebra completamente o modelo
+              anterior</strong
+            >
+            — tornando-o irrelevante ou obsoleto.
+          </div>
+          <div class="word-origin rev">
+            O termo ganhou força acadêmica com o professor Clayton Christensen,
+            de Harvard, em 1997. Hoje é um dos conceitos mais discutidos no
+            mundo dos negócios — e o que estamos vivendo com a IA é considerado
+            pela maioria dos economistas a maior disrupção desde a Revolução
+            Industrial.
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s3">
+        <div class="s-inner">
+          <div class="tag">Dois tipos</div>
+          <h2 style="font-size: clamp(26px, 4vw, 48px)">
+            Nem toda inovação é
+            <em style="font-style: normal; color: var(--accent)">disruptiva</em>
+          </h2>
+          <div class="def-grid">
+            <div class="def-card sust rev">
+              <div class="dc-icon">🔧</div>
+              <h3>Tecnologia Sustentadora</h3>
+              <p>
+                Melhora algo que já existe. O produto fica mais rápido, mais
+                barato, melhor — mas a lógica continua a mesma.
+              </p>
+              <div class="ex">
+                iPhone 14 → iPhone 16. Melhorou tudo. Mas continua sendo um
+                smartphone com a mesma lógica de uso.
+              </div>
+            </div>
+            <div class="def-card disr rev">
+              <div class="dc-icon">💥</div>
+              <h3>Tecnologia Disruptiva</h3>
+              <p>
+                Não melhora o que existe —
+                <strong>cria uma forma completamente nova</strong> de fazer.
+                Torna o modelo anterior obsoleto antes que o mercado perceba.
+              </p>
+              <div class="ex">
+                O smartphone eliminou câmeras compactas, MP3 player, GPS
+                dedicado, agenda física — e não melhorou nenhum deles.
+                Simplesmente os tornou desnecessários.
+              </div>
+            </div>
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s4">
+        <div class="s-inner">
+          <div class="tag">Disrupção ao redor de vocês</div>
+          <h2 style="font-size: clamp(24px, 3.5vw, 44px)">
+            Aconteceu em todo lugar —
+            <em style="font-style: normal; color: var(--accent)"
+              >não só em tech</em
+            >
+          </h2>
+          <div class="ex-grid">
+            <div class="ex-card rev">
+              <div class="ico">🚗</div>
+              <div>
+                <h3>Uber × Táxi</h3>
+                <p>
+                  Não criou um táxi melhor. Usou o celular para eliminar a
+                  necessidade de frota e licença como barreiras. O modelo
+                  inteiro mudou — o produto físico era o carro de sempre.
+                </p>
+                <div class="nota">
+                  Tecnologia foi o habilitador, não o produto.
+                </div>
+              </div>
+            </div>
+            <div class="ex-card rev">
+              <div class="ico">🎬</div>
+              <div>
+                <h3>Netflix × Locadoras</h3>
+                <p>
+                  Começou com DVDs pelo correio — parecia inferior. Em 10 anos,
+                  a Blockbuster faliu. Em 15, o próprio DVD sumiu do mercado.
+                </p>
+                <div class="nota">
+                  A Blockbuster recusou comprar a Netflix por US$ 50 mi em 2000.
+                </div>
+              </div>
+            </div>
+            <div class="ex-card rev">
+              <div class="ico">👟</div>
+              <div>
+                <h3>Fast fashion × Moda tradicional</h3>
+                <p>
+                  Zara e Shein mudaram o ciclo de coleções de duas por ano para
+                  semanas ou dias. O modelo de produção inteiro foi disruptado —
+                  não o produto roupas em si.
+                </p>
+                <div class="nota">
+                  Nenhuma tecnologia complexa — só uma nova lógica de cadeia.
+                </div>
+              </div>
+            </div>
+            <div class="ex-card rev">
+              <div class="ico">🏦</div>
+              <div>
+                <h3>Nubank × Bancos tradicionais</h3>
+                <p>
+                  Sem agência, sem tarifa, sem papel. O banco virou um app. Em
+                  2023 o Nubank ultrapassou o Bradesco em número de clientes no
+                  Brasil.
+                </p>
+                <div class="nota">
+                  De acordo com o Banco Central do Brasil, 2023.
+                </div>
+              </div>
+            </div>
+            <div class="ex-card rev">
+              <div class="ico">🏨</div>
+              <div>
+                <h3>Airbnb × Hotéis</h3>
+                <p>
+                  Maior rede de hospedagem do mundo sem possuir um único quarto.
+                  Mudou quem pode ser anfitrião — não o produto "cama e café".
+                </p>
+                <div class="nota">
+                  Mais de 7 milhões de acomodações em 220 países.
+                </div>
+              </div>
+            </div>
+            <div class="ex-card rev">
+              <div class="ico">📚</div>
+              <div>
+                <h3>EAD × Ensino Presencial</h3>
+                <p>
+                  A pandemia acelerou 10 anos de transição em 1 ano. Vocês
+                  viveram isso. Hoje nenhuma instituição ignora o híbrido.
+                </p>
+                <div class="nota">
+                  Segundo o Censo da Educação Superior (INEP), o EAD cresceu
+                  474% entre 2011 e 2021.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="reveal-hint">→ clique para revelar um a um</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s5">
+        <div class="s-inner">
+          <div class="tag">A evolução das competências</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            Antes era diferencial. Depois virou
+            <em style="font-style: normal; color: var(--accent)">obrigação</em>.
+            E agora?
+          </h2>
+          <div class="eras">
+            <div class="era-card rev">
+              <div class="period">Anos 80–90</div>
+              <h3>🖥️ Era do Operador</h3>
+              <p>
+                Saber digitar era diferencial de elite. Cursos de informática
+                eram pagos, concorridos e listados com orgulho no currículo.
+              </p>
+              <div class="sabia">
+                Vagas de "Digitador" eram anunciadas em jornal com salários
+                competitivos.
+              </div>
+              <div class="badge">Diferencial raro</div>
+            </div>
+            <div class="era-card rev">
+              <div class="period">Anos 2000–2010</div>
+              <h3>🌐 Era do Conectado</h3>
+              <p>
+                Word, Excel e e-mail viraram requisito mínimo. Quem não sabia
+                estava fora antes mesmo da entrevista.
+              </p>
+              <div class="sabia">
+                Empresas bloqueavam Orkut no trabalho por considerar "distração
+                perigosa".
+              </div>
+              <div class="badge">Requisito mínimo</div>
+            </div>
+            <div class="era-card rev">
+              <div class="period">Anos 2010–2022</div>
+              <h3>📱 Era do Nativo Digital</h3>
+              <p>
+                Redes sociais, analytics, UX, apps. Saber usar o computador
+                virou pressuposto — como saber ler.
+              </p>
+              <div class="sabia">
+                O diferencial passou a ser o que você faz com as ferramentas,
+                não se sabe usá-las.
+              </div>
+              <div class="badge">Pressuposto</div>
+            </div>
+            <div class="era-card now rev">
+              <div class="period">2022 → hoje</div>
+              <h3>🤖 Era da IA</h3>
+              <p>
+                A IA generativa chegou com uma velocidade de adoção sem
+                precedentes na história. Quem não aprende está começando a ficar
+                para trás.
+              </p>
+              <div class="sabia">
+                O ciclo que levava 10–15 anos para mudar o mínimo esperado agora
+                está se comprimindo para 2–3 anos.
+              </div>
+              <div class="badge">A próxima camada obrigatória</div>
+            </div>
+          </div>
+          <div class="reveal-hint">→ clique para revelar cada era</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s6">
+        <div class="s-inner">
+          <div class="tag">Dados de adoção</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            A velocidade de adoção
+            <em style="font-style: normal; color: var(--accent)"
+              >nunca foi assim</em
+            >
+          </h2>
+          <p class="chart-intro">
+            Quanto tempo cada tecnologia levou para atingir
+            <strong>100 milhões de usuários</strong>:
+          </p>
+          <div class="compare-bars">
+            <div
+              class="bar-row rev"
+              data-w="100"
+              data-label="68 anos"
+              data-fill="lav"
+            >
+              <div class="bar-label">✈️ Aviação comercial</div>
+              <div class="bar-track"><div class="bar-fill lav"></div></div>
+              <div class="bar-src">
+                Associação Internacional de Transporte Aéreo (IATA), 2023
+              </div>
+            </div>
+            <div
+              class="bar-row rev"
+              data-w="72"
+              data-label="~13 anos"
+              data-fill="lav"
+            >
+              <div class="bar-label">📺 TV a cores</div>
+              <div class="bar-track"><div class="bar-fill lav"></div></div>
+              <div class="bar-src">
+                Nielsen Media Research — dados históricos
+              </div>
+            </div>
+            <div
+              class="bar-row rev"
+              data-w="50"
+              data-label="7 anos"
+              data-fill="org"
+            >
+              <div class="bar-label">🌐 Internet</div>
+              <div class="bar-track"><div class="bar-fill org"></div></div>
+              <div class="bar-src">
+                Our World in Data — Technology Adoption, 2023
+              </div>
+            </div>
+            <div
+              class="bar-row rev"
+              data-w="28"
+              data-label="3,5 anos"
+              data-fill="tea"
+            >
+              <div class="bar-label">📱 Smartphone</div>
+              <div class="bar-track"><div class="bar-fill tea"></div></div>
+              <div class="bar-src">Statista — Global Smartphone User Data</div>
+            </div>
+            <div
+              class="bar-row rev"
+              data-w="20"
+              data-label="2,5 anos"
+              data-fill="ink2c"
+            >
+              <div class="bar-label">📸 Instagram</div>
+              <div class="bar-track"><div class="bar-fill ink2c"></div></div>
+              <div class="bar-src">
+                Meta — relatório de crescimento histórico
+              </div>
+            </div>
+            <div
+              class="bar-row rev"
+              data-w="5"
+              data-label="2 meses"
+              data-fill="yel"
+            >
+              <div class="bar-label">🤖 IA generativa</div>
+              <div class="bar-track"><div class="bar-fill yel"></div></div>
+              <div class="bar-src">
+                Reuters, fevereiro de 2023 — "ChatGPT sets record"
+              </div>
+            </div>
+          </div>
+          <div class="reveal-hint">→ clique para revelar cada barra</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s7">
+        <div class="s-inner">
+          <div class="tag">IA na prática</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            O que a IA já está fazendo
+            <em style="font-style: normal; color: var(--accent)">agora</em>
+          </h2>
+          <div class="area-grid">
+            <div class="area-card rev">
+              <div class="a-icon">⚕️</div>
+              <h3>Saúde</h3>
+              <p>
+                IA diagnostica câncer de pele com precisão superior à de
+                dermatologistas em estudo da Google DeepMind, publicado na
+                Nature Medicine.
+              </p>
+              <div class="headline">
+                "IA detecta câncer de mama com mais precisão do que médicos em
+                estudo com 90 mil pacientes" — The Guardian, 2020
+              </div>
+            </div>
+            <div class="area-card rev">
+              <div class="a-icon">⚖️</div>
+              <h3>Direito</h3>
+              <p>
+                Ferramentas de IA analisam contratos em segundos. Pesquisas
+                jurídicas que levavam dias passaram a levar minutos nos
+                escritórios que adotaram a tecnologia.
+              </p>
+              <div class="headline">
+                "Goldman Sachs usa IA para substituir trabalho de 360 advogados
+                em análise de contratos" — Business Insider, 2017
+              </div>
+            </div>
+            <div class="area-card rev">
+              <div class="a-icon">🎨</div>
+              <h3>Design</h3>
+              <p>
+                Ferramentas de geração de imagem democratizaram a criação
+                visual. O diferencial do designer migrou de execução técnica
+                para direção criativa.
+              </p>
+              <div class="headline">
+                "Adobe prevê que IA generativa vai transformar o papel do
+                designer criativo nos próximos 3 anos" — Forbes, 2023
+              </div>
+            </div>
+            <div class="area-card rev">
+              <div class="a-icon">💻</div>
+              <h3>Desenvolvimento</h3>
+              <p>
+                Assistentes de código com IA aumentam a velocidade de entrega em
+                até 55% em tarefas repetitivas, de acordo com pesquisa do GitHub
+                publicada em 2022.
+              </p>
+              <div class="headline">
+                "GitHub Copilot: devs completam tarefas 55% mais rápido com IA"
+                — GitHub Blog, 2022
+              </div>
+            </div>
+            <div class="area-card rev">
+              <div class="a-icon">🛒</div>
+              <h3>Varejo</h3>
+              <p>
+                Algoritmos de recomendação baseados em IA respondem por cerca de
+                35% do faturamento da Amazon, de acordo com a McKinsey.
+              </p>
+              <div class="headline">
+                "Amazon anuncia sistema de entrega preditiva que separa produtos
+                antes do pedido ser confirmado" — MIT Technology Review, 2022
+              </div>
+            </div>
+            <div class="area-card rev">
+              <div class="a-icon">🎓</div>
+              <h3>Educação</h3>
+              <p>
+                Plataformas com IA adaptativa personalizam o ensino para cada
+                aluno em tempo real, mudando o papel do professor de transmissor
+                para facilitador.
+              </p>
+              <div class="headline">
+                "Duolingo demite 10% dos funcionários após IA assumir criação de
+                conteúdo" — The Verge, 2024
+              </div>
+            </div>
+          </div>
+          <div class="reveal-hint">→ clique para revelar cada área</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s8">
+        <div class="s-inner">
+          <div class="tag">Impacto no trabalho</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            O que muda no
+            <em style="font-style: normal; color: var(--accent)">dia a dia</em>
+            das empresas
+          </h2>
+          <div class="impact-grid">
+            <div class="before-after">
+              <div class="ba-row rev">
+                <div class="ba-box before">Call center com 200 atendentes</div>
+                <div class="ba-arrow">→</div>
+                <div class="ba-box after">
+                  Chatbot IA + 20 atendentes para casos complexos
+                </div>
+              </div>
+              <div class="ba-row rev">
+                <div class="ba-box before">
+                  Relatório de dados: 3 dias de analista
+                </div>
+                <div class="ba-arrow">→</div>
+                <div class="ba-box after">
+                  Insights em 3 minutos. Analista interpreta e decide
+                </div>
+              </div>
+              <div class="ba-row rev">
+                <div class="ba-box before">
+                  Campanha publicitária em 2 semanas
+                </div>
+                <div class="ba-arrow">→</div>
+                <div class="ba-box after">
+                  50 variações testadas em 2 dias com IA
+                </div>
+              </div>
+              <div class="ba-row rev">
+                <div class="ba-box before">
+                  Revisão de contrato: 4h de advogado
+                </div>
+                <div class="ba-arrow">→</div>
+                <div class="ba-box after">
+                  IA identifica cláusulas críticas em minutos
+                </div>
+              </div>
+            </div>
+            <div class="stat-col">
+              <div class="stat-block rev">
+                <div class="stat-num">40%</div>
+                <div class="stat-desc">
+                  dos empregos globais serão <strong>afetados</strong> pela IA
+                </div>
+                <div class="stat-src">
+                  Fundo Monetário Internacional (FMI), janeiro de 2024
+                </div>
+              </div>
+              <div class="stat-block rev">
+                <div class="stat-num">55%</div>
+                <div class="stat-desc">
+                  de aumento de produtividade relatado por desenvolvedores
+                  usando assistentes de IA
+                </div>
+                <div class="stat-src">
+                  GitHub Research — "Quantifying Copilot's Impact", 2022
+                </div>
+              </div>
+              <div class="stat-block rev">
+                <div class="stat-num">77%</div>
+                <div class="stat-desc">
+                  das empresas já usam ou exploram IA em alguma área de negócio
+                </div>
+                <div class="stat-src">
+                  McKinsey Global Institute — The State of AI, 2024
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s9">
+        <div class="s-inner">
+          <div class="tag">O que vem por aí</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            Estimativas para o
+            <em style="font-style: normal; color: var(--accent)"
+              >futuro próximo</em
+            >
+          </h2>
+          <div class="future-grid">
+            <div class="fut-card a rev">
+              <div class="f-year">Até 2027</div>
+              <div class="f-num">85M</div>
+              <h3>funções serão automatizadas</h3>
+              <p>
+                O Fórum Econômico Mundial estima que 85 milhões de funções serão
+                substituídas — mas 97 milhões de novos cargos surgirão no mesmo
+                período.
+              </p>
+              <div class="src-note">
+                Fórum Econômico Mundial — Future of Jobs Report, 2023
+              </div>
+            </div>
+            <div class="fut-card b rev">
+              <div class="f-year">Até 2030</div>
+              <div class="f-num">$15T</div>
+              <h3>adicionados à economia global</h3>
+              <p>
+                A PwC projeta que a IA vai contribuir com 15 trilhões de dólares
+                ao PIB mundial — mais que o PIB atual da China e da Índia
+                juntos.
+              </p>
+              <div class="src-note" style="color: rgba(255, 255, 255, 0.4)">
+                PwC — Sizing the Prize: Global AI Report
+              </div>
+            </div>
+            <div class="fut-card c rev">
+              <div class="f-year">Próximos 5 anos</div>
+              <div class="f-num">↑</div>
+              <h3>Saber usar IA = novo requisito mínimo</h3>
+              <p>
+                Assim como Excel virou obrigação nos anos 2000, dominar
+                ferramentas de IA vai se tornar linha de base para a maioria das
+                profissões.
+              </p>
+              <div class="src-note">
+                LinkedIn Economic Graph — Future of Work AI Report, 2024
+              </div>
+            </div>
+          </div>
+          <div class="fut-footer rev">
+            <strong>⚡</strong>
+            <span
+              >A questão não é <em>"a IA vai me tirar o emprego?"</em> — é
+              <strong
+                >"o profissional que usa IA bem vai me tirar o emprego?"</strong
+              ></span
+            >
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s10">
+        <div class="s-inner">
+          <div class="tag">Novas profissões</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            As vagas que estão
+            <em style="font-style: normal; color: var(--accent)"
+              >surgindo agora</em
+            >
+          </h2>
+          <div class="jobs-grid">
+            <div class="job-card rev">
+              <div class="j-icon">🧠</div>
+              <h3>Engenheiro de Prompts</h3>
+              <div class="demand">Alta demanda</div>
+              <p>
+                Especialista em construir instruções precisas para modelos de
+                IA. Salários entre R$ 8k e R$ 25k no Brasil em 2024, segundo o
+                LinkedIn.
+              </p>
+            </div>
+            <div class="job-card rev">
+              <div class="j-icon">🎓</div>
+              <h3>AI Trainer</h3>
+              <div class="demand">Crescimento acelerado</div>
+              <p>
+                Treina e avalia respostas de modelos de IA para melhorar
+                qualidade. Trabalho remoto, frequentemente como freelancer ou
+                PJ.
+              </p>
+            </div>
+            <div class="job-card rev">
+              <div class="j-icon">🔍</div>
+              <h3>AI Auditor</h3>
+              <div class="demand">Emergente</div>
+              <p>
+                Avalia vieses, erros e riscos em sistemas de IA. Perfil híbrido
+                entre tecnologia, ética e conformidade regulatória.
+              </p>
+            </div>
+            <div class="job-card rev">
+              <div class="j-icon">🤝</div>
+              <h3>AI Product Manager</h3>
+              <div class="demand">Alta demanda</div>
+              <p>
+                Gerencia produtos que têm IA no núcleo. Combina visão de negócio
+                com entendimento técnico de como modelos funcionam.
+              </p>
+            </div>
+            <div class="job-card rev">
+              <div class="j-icon">⚙️</div>
+              <h3>MLOps Engineer</h3>
+              <div class="demand">Muito procurado</div>
+              <p>
+                Responsável por colocar modelos de IA em produção, monitorá-los
+                e garantir que funcionem com estabilidade em escala.
+              </p>
+            </div>
+            <div class="job-card rev">
+              <div class="j-icon">🧬</div>
+              <h3>Dev com especialização em IA</h3>
+              <div class="demand">Diferencial competitivo</div>
+              <p>
+                Desenvolvedor que integra APIs de IA (OpenAI, Anthropic, Google)
+                em sistemas. É o perfil mais próximo de quem está se formando em
+                ADS.
+              </p>
+            </div>
+          </div>
+          <div class="job-note rev">
+            Segundo o relatório LinkedIn Jobs on the Rise 2024, cargos
+            relacionados à IA cresceram <strong>74% ao ano</strong> nos últimos
+            4 anos.
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s11">
+        <div class="s-inner">
+          <div class="tag" style="color: var(--yellow)">
+            O papel do desenvolvedor
+          </div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px); color: #fff">
+            Isso já está
+            <em style="font-style: normal; color: var(--yellow)"
+              >acontecendo</em
+            >
+            em empresas reais
+          </h2>
+          <p class="agent-intro rev">
+            Existem empresas hoje que operam equipes inteiras de desenvolvimento
+            com agentes de IA independentes: um agente faz o papel de front-end,
+            outro de back-end, outro de QA, outro de PO — e eles se comunicam
+            entre si, fazem daily, revisam código e entregam features.
+          </p>
+          <div class="agent-grid">
+            <div class="agent-box rev">
+              <h3>🤖 O que os agentes já fazem</h3>
+              <ul>
+                <li>Escrevem, revisam e refatoram código automaticamente</li>
+                <li>Abrem e fecham tickets conforme o progresso</li>
+                <li>Detectam bugs e sugerem correções em tempo real</li>
+                <li>Documentam o código gerado sem intervenção humana</li>
+                <li>
+                  Fazem deploy em ambientes de teste e reportam resultados
+                </li>
+              </ul>
+            </div>
+            <div class="agent-box rev">
+              <h3>👨‍💻 O que o dev passa a fazer</h3>
+              <ul>
+                <li>
+                  Definir a arquitetura e as decisões técnicas de alto nível
+                </li>
+                <li>
+                  Validar o que a IA entrega — não executar o que ela poderia
+                  fazer
+                </li>
+                <li>Resolver os problemas que a IA ainda não consegue</li>
+                <li>
+                  Garantir contexto de negócio que o modelo não tem acesso
+                </li>
+                <li>Orquestrar os agentes e definir quando intervir</li>
+              </ul>
+            </div>
+          </div>
+          <div class="agent-highlight rev">
+            O desenvolvedor do futuro não é aquele que digita mais código — é
+            aquele que sabe o que pedir, como validar e quando a IA está errada.
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s12">
+        <div class="s-inner">
+          <div class="tag">Guia prático</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            Qual IA usar para
+            <em style="font-style: normal; color: var(--accent)">cada coisa</em
+            >?
+          </h2>
+          <div class="ai-grid">
+            <div class="ai-card ai-gpt rev">
+              <div class="ai-name">ChatGPT</div>
+              <div class="ai-tag">Texto & uso geral</div>
+              <p>
+                Melhor para conversas, rascunhos, explicações e brainstorms.
+                Versátil. Ótimo ponto de entrada. GPT-4o faz texto, imagem e voz
+                na mesma interface.
+              </p>
+              <div class="best-for">
+                → Produtividade geral, conteúdo, ideação
+              </div>
+            </div>
+            <div class="ai-card ai-claude rev">
+              <div class="ai-name">Claude</div>
+              <div class="ai-tag">Código & análise longa</div>
+              <p>
+                Excelente para programação, revisão de código e análise de
+                documentos extensos. Mais cuidadoso com precisão e raciocínio
+                estruturado.
+              </p>
+              <div class="best-for">
+                → Dev, ADS, análise técnica, documentos 😄
+              </div>
+            </div>
+            <div class="ai-card ai-gemini rev">
+              <div class="ai-name">Gemini</div>
+              <div class="ai-tag">Ecossistema Google</div>
+              <p>
+                Nativo no Gmail, Drive e Docs. Ideal para quem já vive no Google
+                Workspace. Acesso a busca em tempo real integrada.
+              </p>
+              <div class="best-for">→ Google Workspace, pesquisa atual</div>
+            </div>
+            <div class="ai-card ai-copilot rev">
+              <div class="ai-name">GitHub Copilot</div>
+              <div class="ai-tag">Código no editor</div>
+              <p>
+                Dentro do VS Code. Completa código, sugere funções e detecta
+                bugs enquanto você digita. Padrão de mercado para
+                desenvolvedores em 2024.
+              </p>
+              <div class="best-for">
+                → Programação, autocomplete, refatoração
+              </div>
+            </div>
+            <div class="ai-card ai-midj rev">
+              <div class="ai-name">Midjourney</div>
+              <div class="ai-tag">Imagens artísticas</div>
+              <p>
+                Referência em geração de imagens com qualidade premium. Controle
+                fino de estilo e composição. Favorito de designers
+                profissionais.
+              </p>
+              <div class="best-for">→ Arte, branding, conceito visual</div>
+            </div>
+            <div class="ai-card ai-leo rev">
+              <div class="ai-name">Leonardo AI</div>
+              <div class="ai-tag">Assets para games & UI</div>
+              <p>
+                Especializado em personagens, texturas e concept art para games.
+                Treinamento específico para game design. Versão gratuita
+                generosa.
+              </p>
+              <div class="best-for">
+                → Game dev, concept art, assets visuais
+              </div>
+            </div>
+          </div>
+          <div class="reveal-hint">→ clique para revelar cada ferramenta</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s13">
+        <div class="s-inner">
+          <div class="tag" style="color: var(--yellow)">Atividade em grupo</div>
+          <div class="act-grid">
+            <div class="left">
+              <h2>Mapa da<br /><em>Disrupção</em></h2>
+              <p>
+                Vocês são consultores contratados por uma empresa fictícia. A IA
+                vai apresentar a empresa, o setor, os desafios e o contexto.
+                Missão: mapear como a IA pode disrupcionar aquele negócio.
+              </p>
+              <div class="sectors">
+                <div class="sec-chip">🏦 Financeiro</div>
+                <div class="sec-chip">🏥 Saúde</div>
+                <div class="sec-chip">📰 Mídia</div>
+                <div class="sec-chip">🎓 Educação</div>
+                <div class="sec-chip">🛒 Varejo</div>
+                <div class="sec-chip">🚚 Logística</div>
+              </div>
+            </div>
+            <div class="act-right">
+              <h3>Como funciona</h3>
+              <ul class="step-list-s">
+                <li>
+                  <span class="n">1</span>Abra o chat e envie:
+                  <em
+                    >"Boa tarde, meu nome é [seu nome] e faço parte do grupo
+                    [nome do grupo]."</em
+                  >
+                  A IA vai apresentar a empresa e o contexto
+                </li>
+                <li>
+                  <span class="n">2</span>Conversem com o "funcionário" da
+                  empresa para entender o negócio. Façam perguntas.
+                </li>
+                <li>
+                  <span class="n">3</span>Pesquisem como a IA já impacta aquele
+                  setor — celular e notebook liberados
+                </li>
+                <li>
+                  <span class="n">4</span>Identifiquem: o que é melhoria? O que
+                  é disrupção real?
+                </li>
+                <li>
+                  <span class="n">5</span>Apresentem em 3 min:
+                  <em>"Se você fosse o CEO, o que faria hoje?"</em>
+                </li>
+              </ul>
+              <div class="entrega-box">
+                <div class="e-label">📄 Entregável</div>
+                <p>
+                  Ao final, peçam ao chat para
+                  <strong>gerar um resumo do que foi discutido</strong>. Copiem
+                  e colem em um documento compartilhado e enviem com os nomes do
+                  grupo. O documento deve conter: empresa, setor, impactos
+                  identificados e recomendação final.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide" id="s14">
+        <div class="s-inner">
+          <div class="tag">Debate</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            A IA
+            <em style="font-style: normal; color: var(--accent2)">liberta</em>
+            ou
+            <em style="font-style: normal; color: var(--accent)">preocupa</em>?
+          </h2>
+          <div class="debate-cols">
+            <div class="deb-col pro rev">
+              <h3>✅ Liberta</h3>
+              <ul>
+                <li>
+                  Automatiza o repetitivo, liberando tempo para criatividade
+                </li>
+                <li>
+                  Democratiza habilidades antes caras: design, código, análise
+                </li>
+                <li>Cria profissões que não existiam há 3 anos</li>
+                <li>
+                  Pequenas empresas competem com grandes usando as mesmas
+                  ferramentas
+                </li>
+              </ul>
+            </div>
+            <div class="deb-col contra rev">
+              <h3>⚠️ Preocupa</h3>
+              <ul>
+                <li>Concentra poder em poucas big techs</li>
+                <li>
+                  Elimina empregos de entrada — onde jovens aprendem na prática
+                </li>
+                <li>Preconceitos dos dados de treino propagados em escala</li>
+                <li>Adaptação exige acesso que nem todos têm</li>
+              </ul>
+            </div>
+          </div>
+          <div class="closing-q rev">
+            <div class="cq-label">💬 Questão para cada um de vocês</div>
+            <p>
+              Você está se formando em ADS. Daqui 5 anos, o que vai diferenciar
+              o seu trabalho de um modelo de IA que já escreve código, cria
+              sistemas e analisa dados?
+            </p>
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s15">
+        <div class="s-inner">
+          <div class="tag">Saúde Mental Tech</div>
+          <h2 style="font-size: clamp(22px, 3vw, 42px)">
+            O Elefante na Sala:
+            <em style="font-style: normal; color: var(--accent)"
+              >A Síndrome do Impostor</em
+            >
+          </h2>
+          <p class="chart-intro rev" style="margin-bottom: 12px">
+            "Se a IA faz tudo tão rápido, qual é o meu valor?"
+          </p>
+
+          <div
+            class="debate-cols"
+            style="grid-template-columns: 1fr 1fr; align-items: start"
+          >
+            <div
+              class="deb-col pro rev"
+              style="background: var(--white); border-color: var(--border)"
+            >
+              <p
+                style="
+                  margin-bottom: 16px;
+                  font-size: clamp(14px, 1.5vw, 17px);
+                  color: var(--ink2);
+                  line-height: 1.6;
+                "
+              >
+                A evolução desenfreada das ferramentas de IA tem gerado um pico
+                de ansiedade na comunidade de desenvolvimento.
+              </p>
+              <p
+                style="
+                  margin-bottom: 16px;
+                  font-size: clamp(14px, 1.5vw, 17px);
+                  color: var(--ink2);
+                  line-height: 1.6;
+                "
+              >
+                A sensação de que
+                <strong>"nunca sabemos o suficiente"</strong> ou que ficaremos
+                obsoletos em meses é o que chamamos de intensificação da
+                Síndrome do Impostor.
+              </p>
+
+              <div
+                style="
+                  margin-top: 20px;
+                  background: rgba(26, 107, 94, 0.08);
+                  border-left: 3px solid var(--accent2);
+                  padding: 14px 18px;
+                  border-radius: 0 12px 12px 0;
+                "
+              >
+                <p
+                  style="
+                    font-size: clamp(14px, 1.5vw, 16px);
+                    color: var(--accent2);
+                    font-weight: 600;
+                    line-height: 1.5;
+                  "
+                >
+                  Lembre-se: A IA é um amplificador da sua capacidade de
+                  resolver problemas, não um substituto para o seu julgamento
+                  crítico e experiência humana.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="deb-col contra rev"
+              style="padding: 0; background: transparent; border: none"
+            >
+              <div
+                style="
+                  position: relative;
+                  padding-bottom: 56.25%;
+                  height: 0;
+                  overflow: hidden;
+                  border-radius: 12px;
+                  border: 1px solid var(--border);
+                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                "
+              >
+                <iframe
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                  "
+                  src="https://www.youtube.com/embed/xO2EkUAtTh8"
+                  title="YouTube video player"
+                  frameborder="0"
+                  allow="
+                    accelerometer;
+                    autoplay;
+                    clipboard-write;
+                    encrypted-media;
+                    gyroscope;
+                    picture-in-picture;
+                    web-share;
+                  "
+                  allowfullscreen
+                ></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <div class="slide" id="s16">
+        <div class="bg-grid2"></div>
+        <div class="close-inner">
+          <div class="big-close">
+            O diferencial<br />não é a <em>ferramenta</em>.<br />É quem sabe<br />usá-la
+            melhor.
+          </div>
+          <p>
+            O curso de informática formava quem sabia usar a ferramenta de uma
+            época. O que vocês precisam construir é a capacidade de aprender
+            qualquer ferramenta nova rapidamente.<br /><br />As ferramentas vão
+            continuar mudando. A curiosidade, não.
+          </p>
+          <div class="tools">
+            <div class="tool-chip">ChatGPT</div>
+            <div class="tool-chip">Claude</div>
+            <div class="tool-chip">Gemini</div>
+            <div class="tool-chip">Copilot</div>
+            <div class="tool-chip">Midjourney</div>
+            <div class="tool-chip">Leonardo</div>
+            <div class="tool-chip">... e o que vem depois</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const total = slides.length;
+      let current = 0;
+      let revIdx = {};
+      document.getElementById("tot").textContent = total;
+
+      function getRevs(slide) {
+        return Array.from(slide.querySelectorAll(".rev"));
+      }
+
+      function revealNext() {
+        const slide = slides[current];
+        const id = slide.id;
+        const revs = getRevs(slide);
+        if (!revs.length) return false;
+        const idx = revIdx[id] || 0;
+        if (idx >= revs.length) return false;
+        const el = revs[idx];
+        el.classList.add("rev-done");
+        revIdx[id] = idx + 1;
+        if (el.classList.contains("bar-row")) {
+          const fill = el.querySelector(".bar-fill");
+          const w = el.dataset.w;
+          const label = el.dataset.label;
+          if (fill) {
+            setTimeout(() => {
+              fill.style.width = w + "%";
+              fill.classList.add("bar-active");
+              fill.textContent = label;
+            }, 60);
+          }
+        }
+        if (revIdx[id] >= revs.length) {
+          const hint = slide.querySelector(".reveal-hint");
+          if (hint) hint.classList.add("done");
+        }
+        return true;
+      }
+
+      function goTo(n) {
+        if (n < 0 || n >= total) return;
+        slides[current].classList.remove("active");
+        slides[current].classList.add("out");
+        setTimeout(() => slides[current].classList.remove("out"), 460);
+        current = n;
+        slides[current].classList.add("active");
+        const inner = slides[current].querySelector(".s-inner");
+        if (inner) inner.scrollTop = 0;
+        document.getElementById("cur").textContent = current + 1;
+        document.getElementById("progress-bar").style.width =
+          ((current + 1) / total) * 100 + "%";
+      }
+
+      const advance = () => {
+        if (!revealNext()) goTo(current + 1);
+      };
+      const back = () => goTo(current - 1);
+
+      document.getElementById("btn-next").addEventListener("click", advance);
+      document.getElementById("btn-prev").addEventListener("click", back);
+
+      document.addEventListener("keydown", (e) => {
+        if (["ArrowRight", "PageDown", " "].includes(e.key)) {
+          e.preventDefault();
+          advance();
+        }
+        if (["ArrowLeft", "PageUp"].includes(e.key)) {
+          e.preventDefault();
+          back();
+        }
+      });
+
+      let touchX = null;
+      document.addEventListener(
+        "touchstart",
+        (e) => {
+          touchX = e.touches[0].clientX;
+        },
+        { passive: true },
+      );
+      document.addEventListener(
+        "touchend",
+        (e) => {
+          if (touchX === null) return;
+          const dx = e.changedTouches[0].clientX - touchX;
+          if (Math.abs(dx) > 48) dx < 0 ? advance() : back();
+          touchX = null;
+        },
+        { passive: true },
+      );
+
+      document.getElementById("progress-bar").style.width =
+        (1 / total) * 100 + "%";
+    </script>
+  </body>
+</html>
