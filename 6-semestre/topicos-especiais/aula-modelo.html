@@ -2,39 +2,31 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>NOME DA AULA — ADS 6º Sem</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../../assets/css/slides.css" />
   </head>
   <body>
+
     <div class="action-buttons">
       <a href="index.html" class="btn-action">🏠 Voltar</a>
-      <button
-        onclick="window.print()"
-        class="btn-action"
-        title="Gera o arquivo PDF"
-      >
-        📄 Baixar PDF
-      </button>
+      <button onclick="window.print()" class="btn-action" title="Gera o arquivo PDF">📄 Baixar PDF</button>
     </div>
 
     <div id="progress-bar"></div>
-    <div id="slide-counter">
-      <span id="cur">1</span> / <span id="tot"></span>
-    </div>
+    <div id="slide-counter"><span id="cur">1</span> / <span id="tot"></span></div>
     <div id="slide-controls">
       <button class="ctrl-btn" id="btn-prev">←</button>
+      <button class="ctrl-btn" id="btn-all" title="Revelar tudo (A)">⊞</button>
       <button class="ctrl-btn" id="btn-next">→</button>
     </div>
 
     <div class="deck">
+
+      <!-- =============================================
+           SLIDE 0 — CAPA (obrigatório, não remover)
+           ============================================= -->
       <div class="slide active" id="s0">
         <div class="bg-grid"></div>
         <div class="blob blob1"></div>
@@ -42,11 +34,7 @@
         <div class="cover-inner">
           <p class="eyebrow">ADS · 6º Semestre · TÓPICOS ESPECIAIS</p>
           <h1>Título<br /><em>Principal</em><br />da Aula</h1>
-          <p class="sub">
-            Subtítulo ou breve descrição de uma ou duas linhas sobre o que será
-            abordado neste dia.
-          </p>
-
+          <p class="sub">Subtítulo ou breve descrição de uma ou duas linhas sobre o que será abordado neste dia.</p>
           <div class="topics-bar">
             <div class="topic-chip">Tópico 1</div>
             <div class="topic-chip">Tópico 2</div>
@@ -55,144 +43,134 @@
         </div>
       </div>
 
+      <!-- =============================================
+           SLIDE — PALAVRA / CONCEITO CENTRAL
+           Use: para definir um termo importante
+           ============================================= -->
       <div class="slide">
         <div class="s-inner">
-          <div class="tag">Seção da Aula</div>
+          <div class="tag">Antes de tudo</div>
           <div class="word-hero rev">Conceito.</div>
           <div class="word-def rev">
-            Definição principal ou texto em destaque entra aqui.<br /><br />
-            Você pode usar <strong>negrito</strong> para dar ênfase a palavras
-            importantes.
+            Definição principal entra aqui.<br /><br />
+            Use <strong>negrito</strong> para dar ênfase.
           </div>
           <div class="word-origin rev">
-            Parágrafo de apoio, curiosidade ou nota de rodapé. Fica com uma
-            barrinha laranja do lado esquerdo.
+            Parágrafo de apoio com barra lateral. Boa para origem, contexto histórico ou nota extra.
           </div>
           <div class="reveal-hint">→ clique para revelar</div>
         </div>
       </div>
 
+      <!-- =============================================
+           SLIDE — COMPARATIVO (2 colunas)
+           Use: para contrastar dois conceitos
+           ============================================= -->
       <div class="slide">
         <div class="s-inner">
           <div class="tag">Comparativo</div>
-          <h2 style="font-size: clamp(26px, 4vw, 48px)">
-            O título do slide
-            <em style="font-style: normal; color: var(--accent)">entra aqui</em>
+          <h2 style="font-size:clamp(26px,4vw,48px)">
+            Título do slide <em style="font-style:normal;color:var(--accent)">aqui</em>
           </h2>
-
           <div class="def-grid">
             <div class="def-card sust rev">
-              <h3 style="font-size: 38px; margin-bottom: 16px">🔧</h3>
+              <div style="font-size:38px;margin-bottom:16px">🔧</div>
               <h3>Lado A</h3>
-              <p class="card-p">
-                Explicação sobre este item. O card ajustará o tamanho
-                automaticamente.
-              </p>
-              <div
-                style="
-                  margin-top: 16px;
-                  font-size: 13px;
-                  padding: 14px;
-                  border-radius: 10px;
-                  background: var(--white);
-                  color: var(--muted);
-                "
-              >
-                Exemplo ou nota extra aqui.
-              </div>
+              <p class="card-p">Explicação do item.</p>
             </div>
-
             <div class="def-card disr rev">
-              <h3 style="font-size: 38px; margin-bottom: 16px">💥</h3>
+              <div style="font-size:38px;margin-bottom:16px">💥</div>
               <h3>Lado B</h3>
-              <p class="card-p" style="color: rgba(255, 255, 255, 0.7)">
-                Se não quiser fundo escuro, basta tirar a classe 'disr' da div
-                acima e colocar 'sust'.
-              </p>
+              <p class="card-p" style="color:rgba(255,255,255,.7)">Troque "disr" por "sust" se não quiser fundo escuro.</p>
             </div>
           </div>
           <div class="reveal-hint">→ clique para revelar</div>
         </div>
       </div>
 
+      <!-- =============================================
+           SLIDE — LISTA COM ÍCONES
+           Use: exemplos, casos reais, itens com ícone
+           ============================================= -->
       <div class="slide">
         <div class="s-inner">
-          <div class="tag">Lista de Exemplos</div>
-          <h2 style="font-size: clamp(24px, 3.5vw, 44px)">
-            Exemplos com
-            <em style="font-style: normal; color: var(--accent)">Ícones</em>
+          <div class="tag">Exemplos</div>
+          <h2 style="font-size:clamp(24px,3.5vw,44px)">
+            Título <em style="font-style:normal;color:var(--accent)">aqui</em>
           </h2>
-
           <div class="ex-grid">
-            <div class="ex-card rev" style="display: flex; gap: 16px">
-              <div
-                style="
-                  font-size: 30px;
-                  flex-shrink: 0;
-                  width: 54px;
-                  height: 54px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  background: var(--bg);
-                  border-radius: 12px;
-                "
-              >
-                🚀
-              </div>
+
+            <div class="ex-card rev">
+              <div class="card-icon">🚀</div>
               <div>
                 <h3>Título do Item</h3>
-                <p class="card-p">
-                  Descrição do item aqui. Fica muito bonito e organizado para o
-                  aluno ler.
-                </p>
+                <p class="card-p">Descrição do item aqui.</p>
+                <p class="src-note">Fonte opcional.</p>
               </div>
             </div>
 
-            <div class="ex-card rev" style="display: flex; gap: 16px">
-              <div
-                style="
-                  font-size: 30px;
-                  flex-shrink: 0;
-                  width: 54px;
-                  height: 54px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  background: var(--bg);
-                  border-radius: 12px;
-                "
-              >
-                📊
-              </div>
+            <div class="ex-card rev">
+              <div class="card-icon">📊</div>
               <div>
                 <h3>Outro Item</h3>
-                <p class="card-p">
-                  Descrição do item aqui. O Grid organiza automaticamente em
-                  colunas.
-                </p>
+                <p class="card-p">O grid organiza automaticamente em colunas.</p>
               </div>
             </div>
 
-            <div class="ex-card rev" style="display: flex; gap: 16px">
-              <div
-                style="
-                  font-size: 30px;
-                  flex-shrink: 0;
-                  width: 54px;
-                  height: 54px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  background: var(--bg);
-                  border-radius: 12px;
-                "
-              >
-                💻
-              </div>
+            <div class="ex-card rev">
+              <div class="card-icon">💻</div>
               <div>
                 <h3>Mais um Item</h3>
-                <p class="card-p">Descrição do item aqui.</p>
+                <p class="card-p">Adicione ou remova cards conforme precisar.</p>
+              </div>
+            </div>
+
+            <div class="ex-card rev">
+              <div class="card-icon">🎯</div>
+              <div>
+                <h3>Quarto Item</h3>
+                <p class="card-p">O layout responde automaticamente no mobile.</p>
+              </div>
+            </div>
+
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
+        </div>
+      </div>
+
+      <!-- =============================================
+           SLIDE — ANTES / DEPOIS + ESTATÍSTICAS
+           Use: para impacto de mudanças com dados
+           ============================================= -->
+      <div class="slide">
+        <div class="s-inner">
+          <div class="tag">Dados</div>
+          <h2 style="font-size:clamp(24px,3.5vw,44px)">
+            Título <em style="font-style:normal;color:var(--accent)">aqui</em>
+          </h2>
+          <div class="impact-grid">
+            <div class="before-after">
+              <div class="ba-row rev">
+                <div class="ba-box before">Situação anterior</div>
+                <div class="ba-arrow">→</div>
+                <div class="ba-box after">Situação nova</div>
+              </div>
+              <div class="ba-row rev">
+                <div class="ba-box before">Outro exemplo antes</div>
+                <div class="ba-arrow">→</div>
+                <div class="ba-box after">Outro exemplo depois</div>
+              </div>
+            </div>
+            <div class="stat-col">
+              <div class="stat-block rev">
+                <div class="stat-num">00%</div>
+                <div class="stat-desc">Descrição do dado aqui</div>
+                <div class="stat-src">Fonte — Instituição, Ano</div>
+              </div>
+              <div class="stat-block rev">
+                <div class="stat-num">00M</div>
+                <div class="stat-desc">Descrição do segundo dado</div>
+                <div class="stat-src">Fonte — Instituição, Ano</div>
               </div>
             </div>
           </div>
@@ -200,63 +178,58 @@
         </div>
       </div>
 
+      <!-- =============================================
+           SLIDE — DEBATE (2 colunas pro/contra)
+           Use: para discussões e fechamento de seção
+           ============================================= -->
       <div class="slide">
-        <div
-          class="bg-grid2"
-          style="
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background-image:
-              linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-              linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0.03) 1px,
-                transparent 1px
-              );
-            background-size: 50px 50px;
-          "
-        ></div>
-        <div
-          class="close-inner"
-          style="
-            background: var(--ink);
-            color: #fff;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-          "
-        >
-          <div
-            class="big-close"
-            style="
-              max-width: 800px;
-              font-family: var(--font-h);
-              font-size: clamp(32px, 6.5vw, 72px);
-              font-weight: 900;
-              line-height: 1.05;
-              color: #fff;
-              margin-bottom: 24px;
-            "
-          >
-            Obrigado pela<br />sua <em>atenção</em>!
+        <div class="s-inner">
+          <div class="tag">Debate</div>
+          <h2 style="font-size:clamp(22px,3vw,42px)">
+            Pergunta <em style="font-style:normal;color:var(--accent2)">a</em> ou <em style="font-style:normal;color:var(--accent)">b</em>?
+          </h2>
+          <div class="debate-cols">
+            <div class="deb-col pro rev">
+              <h3>✅ Argumento positivo</h3>
+              <ul>
+                <li>Ponto 1 do argumento</li>
+                <li>Ponto 2 do argumento</li>
+                <li>Ponto 3 do argumento</li>
+              </ul>
+            </div>
+            <div class="deb-col contra rev">
+              <h3>⚠️ Argumento negativo</h3>
+              <ul>
+                <li>Ponto 1 do argumento</li>
+                <li>Ponto 2 do argumento</li>
+                <li>Ponto 3 do argumento</li>
+              </ul>
+            </div>
           </div>
-          <p
-            style="
-              font-size: 16px;
-              color: rgba(255, 255, 255, 0.46);
-              max-width: 600px;
-            "
-          >
-            Mensagem final de reflexão da aula entra aqui.
-          </p>
+          <div class="closing-q rev">
+            <div class="cq-label">💬 Questão para a turma</div>
+            <p>Pergunta reflexiva que encerra a discussão e fica na cabeça dos alunos.</p>
+          </div>
+          <div class="reveal-hint">→ clique para revelar</div>
         </div>
       </div>
-    </div>
+
+      <!-- =============================================
+           SLIDE — ENCERRAMENTO (obrigatório, manter por último)
+           Classe "slide-final" faz todo o estilo. Só troque o texto.
+           ============================================= -->
+      <div class="slide slide-final">
+        <div class="bg-grid2"></div>
+        <div class="close-inner">
+          <div class="big-close">
+            Frase de<br />encerramento <em>aqui</em>!
+          </div>
+          <p>Mensagem final de reflexão da aula entra aqui. Pode ter duas linhas.</p>
+        </div>
+      </div>
+
+    </div><!-- /deck -->
+
     <script src="../../assets/js/slides.js"></script>
   </body>
 </html>

@@ -11,6 +11,38 @@ document.addEventListener("DOMContentLoaded", () => {
     return Array.from(slide.querySelectorAll(".rev"));
   }
 
+  // Revela TODOS os itens do slide atual de uma vez (sem animação)
+  function revealAll() {
+    const slide = slides[current];
+    const id = slide.id;
+    const revs = getRevs(slide);
+    if (!revs.length) return;
+
+    // Desliga transição temporariamente para revelar instantâneo
+    revs.forEach(el => {
+      el.style.transition = "none";
+      el.classList.add("rev-done");
+      // Anima barras se houver
+      if (el.classList.contains("bar-row")) {
+        const fill = el.querySelector(".bar-fill");
+        if (fill) {
+          fill.style.transition = "none";
+          fill.style.width = el.dataset.w + "%";
+          fill.classList.add("bar-active");
+          fill.textContent = el.dataset.label;
+        }
+      }
+    });
+    // Re-habilita transição após o frame
+    requestAnimationFrame(() => {
+      revs.forEach(el => el.style.transition = "");
+    });
+
+    revIdx[id] = revs.length;
+    const hint = slide.querySelector(".reveal-hint");
+    if (hint) hint.classList.add("done");
+  }
+
   function revealNext() {
     const slide = slides[current];
     const id = slide.id;
@@ -68,8 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const btnNext = document.getElementById("btn-next");
   const btnPrev = document.getElementById("btn-prev");
+  const btnAll  = document.getElementById("btn-all");
+
   if (btnNext) btnNext.addEventListener("click", advance);
   if (btnPrev) btnPrev.addEventListener("click", back);
+  if (btnAll)  btnAll.addEventListener("click", revealAll);
 
   document.addEventListener("keydown", (e) => {
     if (["ArrowRight", "PageDown", " "].includes(e.key)) {
@@ -80,14 +115,16 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       back();
     }
+    // Tecla A ou Enter revela tudo no slide atual
+    if (e.key === "a" || e.key === "A") {
+      revealAll();
+    }
   });
 
   let touchX = null;
   document.addEventListener(
     "touchstart",
-    (e) => {
-      touchX = e.touches[0].clientX;
-    },
+    (e) => { touchX = e.touches[0].clientX; },
     { passive: true },
   );
   document.addEventListener(

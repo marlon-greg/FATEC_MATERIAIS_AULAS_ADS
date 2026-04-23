@@ -165,6 +165,20 @@ body {
   transform: translateY(-2px);
 }
 
+/* BOTÃO REVELAR TUDO — estilo diferenciado para separar do nav principal */
+#btn-all {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  font-size: 18px;
+}
+#btn-all:hover,
+#btn-all:active {
+  background: #b03d14;
+  border-color: #b03d14;
+  color: #fff;
+}
+
 /* HELPERS */
 .tag {
   display: inline-flex;
@@ -1419,18 +1433,102 @@ h3 {
   color: rgba(255, 255, 255, 0.6);
 }
 
+/* CARD ICON — ícone dentro de ex-card (elimina inline style repetido no modelo) */
+.card-icon {
+  font-size: 30px;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border-radius: 12px;
+}
+
+/* CARD TEXT — parágrafo padrão dentro de cards */
+.card-p {
+  font-size: clamp(14px, 1.5vw, 17px);
+  color: var(--ink2);
+  line-height: 1.55;
+}
+
+/* SLIDE FINAL GENÉRICO — encerramento de qualquer aula (substitui inline styles do modelo) */
+.slide-final {
+  background: var(--ink);
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.slide-final .bg-grid2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.slide-final .close-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  padding: 30px 24px;
+}
+.slide-final p {
+  font-size: clamp(16px, 1.8vw, 20px);
+  color: rgba(255, 255, 255, 0.46);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 600px;
+}
+
+/* GRID GENÉRICO 2 e 3 colunas — para slides sem classe específica */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 14px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+@media (max-width: 860px) {
+  .grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 680px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* =========================================
-   PRINT MODE (PDF Otimizado - Fontes Reduzidas)
+   PRINT MODE — Modo Apostila
+   Filosofia: slide vira bloco de texto corrido.
+   Sem grid, sem card visual, sem coluna.
+   Fonte única, espaço previsível, sem corte.
    ========================================= */
 @media print {
+  /* 1. RESET DE LAYOUT — tudo vira documento */
   html,
   body {
     height: auto !important;
     overflow: visible !important;
-    background: #ffffff !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    background: #fff !important;
+    font-size: 11pt !important;
+    font-family: "Inter", sans-serif !important;
+    color: #111 !important;
   }
+
   .deck {
     width: 100% !important;
     height: auto !important;
@@ -1438,189 +1536,324 @@ h3 {
     display: block !important;
   }
 
-  /* O slide ocupa a folha A4. O page-break-inside avoid impede que corte no meio */
+  /* 2. CADA SLIDE = UMA SEÇÃO NO DOCUMENTO
+        height auto — cresce quanto precisar
+        page-break-before garante que começa numa página nova */
   .slide {
-    position: relative !important;
+    position: static !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 100vh !important;
+    min-height: unset !important;
     opacity: 1 !important;
     transform: none !important;
-    display: flex !important;
-    page-break-after: always !important;
-    page-break-inside: avoid !important;
+    display: block !important;
     overflow: visible !important;
-    background: #ffffff !important;
-    color: #000000 !important;
+    background: #fff !important;
+    color: #111 !important;
+    page-break-before: always !important;
+    break-before: page !important;
+    page-break-inside: auto !important;
+    border-bottom: 2px solid #d94f1e;
+    padding-bottom: 24pt;
+    margin-bottom: 0;
+  }
+  .slide:first-child {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
   }
 
+  /* 3. ESCONDE TUDO QUE É INTERFACE */
   #slide-controls,
   #slide-counter,
   #progress-bar,
   .action-buttons,
   .reveal-hint,
-  .video-container,
   .bg-grid,
   .bg-grid2,
-  .blob {
+  .blob,
+  .bar-track,
+  .topics-bar,
+  .card-icon,
+  .video-container {
     display: none !important;
   }
+
+  /* 4. REVELA CONTEÚDO ANIMADO */
   .rev {
     opacity: 1 !important;
     transform: none !important;
     pointer-events: auto !important;
   }
 
-  /* REDUÇÃO DE ESPAÇOS: Dá mais margem para o conteúdo caber na folha */
+  /* 5. INNER SEM SCROLL */
   .s-inner {
     overflow: visible !important;
-    height: 100% !important;
-    padding: 20px 30px !important;
+    height: auto !important;
+    padding: 16pt 0 0 0 !important;
+    display: block !important;
   }
 
-  /* FORÇA TEXTO ESCURO E REDUZ A FONTE SÓ NA HORA DE SALVAR O PDF */
-  * {
-    color: #111111 !important;
-    text-shadow: none !important;
-    box-shadow: none !important;
-  }
-
-  /* Fontes convertidas para PT (pontos de impressão) para ficarem menores e precisas */
+  /* 6. TIPOGRAFIA ÚNICA E CONSISTENTE */
   h1,
   .big-close {
-    font-size: 32pt !important;
-    line-height: 1.1 !important;
-    margin-bottom: 15px !important;
-    color: #000000 !important;
+    font-size: 22pt !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+    color: #111 !important;
+    margin: 0 0 10pt 0 !important;
+    letter-spacing: -0.02em !important;
   }
-  h2,
-  .act-grid .left h2 {
-    font-size: 20pt !important;
-    margin-bottom: 15px !important;
-    color: #000000 !important;
+  h1 em,
+  .big-close em {
+    font-style: normal !important;
+    color: #d94f1e !important;
   }
-  h3,
-  .agent-box h3 {
-    font-size: 14pt !important;
-    margin-bottom: 8px !important;
-    color: #000000 !important;
+  h2 {
+    font-size: 16pt !important;
+    font-weight: 800 !important;
+    color: #111 !important;
+    margin: 8pt 0 6pt 0 !important;
+    line-height: 1.25 !important;
+  }
+  h2 em {
+    font-style: normal !important;
+    color: #d94f1e !important;
+  }
+  h3 {
+    font-size: 12pt !important;
+    font-weight: 700 !important;
+    color: #111 !important;
+    margin: 8pt 0 3pt 0 !important;
   }
   p,
   li,
-  div,
-  span,
-  .card-p {
-    font-size: 11pt !important;
-    line-height: 1.45 !important;
-    color: #333333 !important;
+  .card-p,
+  .word-def,
+  .word-origin,
+  .stat-desc,
+  .src-note,
+  .aula-info p {
+    font-size: 10.5pt !important;
+    line-height: 1.5 !important;
+    color: #333 !important;
+    margin-bottom: 4pt !important;
   }
-
-  em,
-  .big-close em,
-  #s0 h1 em,
-  .tag {
+  .word-hero {
+    font-size: 28pt !important;
+    font-weight: 900 !important;
     color: #d94f1e !important;
-    font-weight: 800 !important;
+    margin-bottom: 8pt !important;
+    letter-spacing: -0.02em !important;
   }
-  .tag,
-  .ai-tag,
-  .demand,
-  .topic-chip,
-  .tool-chip,
-  .sec-chip,
-  .badge {
-    background: #f1f3f5 !important;
-    border: 1px solid #ced4da !important;
-    color: #212529 !important;
-    font-size: 9pt !important;
+  .tag {
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #d94f1e !important;
+    display: block !important;
+    margin-bottom: 4pt !important;
   }
-
-  /* Compactando os cartões para caber mais coisas na folha */
-  .card,
-  .def-card,
-  .ex-card,
-  .era-card,
-  .area-card,
-  .ba-box,
-  .fut-card,
-  .job-card,
-  .agent-box,
-  .ai-card,
-  .act-right,
-  .deb-col,
-  .closing-q {
-    background: #f8f9fa !important;
-    border: 1px solid #dee2e6 !important;
-    color: #000000 !important;
-    break-inside: avoid !important;
-    padding: 15px !important;
-    margin-bottom: 10px !important;
+  .tag::after {
+    display: none !important;
   }
 
-  /* Compactando os Grids */
-  .grid-2,
-  .grid-3,
+  /* 7. GRIDS VIRAM LISTA VERTICAL — sem coluna, sem quebra lateral */
   .def-grid,
   .ex-grid,
-  .debate-cols,
   .eras,
   .area-grid,
   .future-grid,
   .jobs-grid,
-  .ai-grid {
-    gap: 12px !important;
-    margin-top: 10px !important;
+  .ai-grid,
+  .debate-cols,
+  .impact-grid,
+  .act-grid,
+  .agent-grid,
+  .grid-2,
+  .grid-3 {
+    display: block !important;
+    columns: unset !important;
+    gap: 0 !important;
+    margin-top: 6pt !important;
   }
 
-  #s0,
-  #s11,
-  #s13,
-  #s16 {
-    background: #ffffff !important;
+  /* 8. CARDS VIRAM PARÁGRAFOS COM LINHA DIVISÓRIA */
+  .def-card,
+  .ex-card,
+  .era-card,
+  .area-card,
+  .fut-card,
+  .job-card,
+  .ai-card,
+  .agent-box,
+  .deb-col,
+  .act-right,
+  .ba-box,
+  .stat-block,
+  .closing-q,
+  .entrega-box,
+  .word-origin {
+    display: block !important;
+    background: none !important;
+    border: none !important;
+    border-top: 1px solid #ddd !important;
+    border-radius: 0 !important;
+    padding: 6pt 0 !important;
+    margin-bottom: 0 !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+  }
+  .def-card:first-child,
+  .ex-card:first-child,
+  .era-card:first-child,
+  .area-card:first-child,
+  .fut-card:first-child,
+  .job-card:first-child,
+  .ai-card:first-child,
+  .stat-block:first-child {
+    border-top: none !important;
   }
 
-  /* Barras */
-  .bar-track {
-    border: 1px solid #333 !important;
+  /* 8b. ANTES/DEPOIS — inline simples */
+  .before-after {
+    display: block !important;
+  }
+  .ba-row {
+    display: block !important;
+    margin-bottom: 4pt !important;
+  }
+  .ba-box.before::before {
+    content: "Antes: ";
+    font-weight: 700;
+  }
+  .ba-box.after::before {
+    content: "Depois: ";
+    font-weight: 700;
+    color: #1a6b5e;
+  }
+  .ba-arrow {
+    display: none !important;
+  }
+
+  /* 8c. STAT COL */
+  .stat-col {
+    display: block !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  .stat-num {
+    font-size: 16pt !important;
+    font-weight: 900 !important;
+    color: #d94f1e !important;
+    display: inline !important;
+    margin-right: 6pt !important;
+  }
+
+  /* 8d. BARRAS DE COMPARAÇÃO — vira lista de texto */
+  .compare-bars {
+    display: block !important;
+  }
+  .bar-row {
+    display: block !important;
+    margin-bottom: 4pt !important;
+    border-top: 1px solid #eee !important;
+    padding-top: 4pt !important;
+    break-inside: avoid !important;
+  }
+  .bar-row .bar-label {
+    font-weight: 600 !important;
+    font-size: 10.5pt !important;
+    color: #111 !important;
+    display: inline !important;
+    width: auto !important;
+    text-align: left !important;
+  }
+  .bar-row .bar-src {
+    font-size: 9pt !important;
+    color: #666 !important;
+    font-style: italic !important;
+    display: block !important;
+  }
+  /* Mostra o valor (data-label) depois do label */
+  .bar-row::after {
+    content: " — " attr(data-label);
+    font-weight: 700;
+    color: #d94f1e;
+    font-size: 10.5pt;
+  }
+
+  /* 8e. CAPA */
+  #s0 {
     background: #fff !important;
-    height: 30px !important;
+    color: #111 !important;
+    justify-content: flex-start !important;
   }
-  .bar-fill {
-    background: #e2e8f0 !important;
-    color: #000 !important;
-    border-right: 1px solid #333 !important;
-    font-size: 10pt !important;
+  #s0 .cover-inner {
+    padding: 0 !important;
   }
-  .bar-row[data-w="100"] .bar-fill {
-    width: 100% !important;
-    opacity: 1 !important;
+  #s0 .eyebrow {
+    color: #888 !important;
+    font-size: 9pt !important;
   }
-  .bar-row[data-w="72"] .bar-fill {
-    width: 72% !important;
-    opacity: 1 !important;
+  #s0 .sub {
+    color: #555 !important;
+    font-size: 11pt !important;
   }
-  .bar-row[data-w="50"] .bar-fill {
-    width: 50% !important;
-    opacity: 1 !important;
+
+  /* 8f. SLIDE FINAL */
+  .slide-final {
+    background: #fff !important;
+    color: #111 !important;
+    text-align: left !important;
+    align-items: flex-start !important;
   }
-  .bar-row[data-w="28"] .bar-fill {
-    width: 28% !important;
-    opacity: 1 !important;
+  .slide-final .close-inner {
+    padding: 0 !important;
   }
-  .bar-row[data-w="20"] .bar-fill {
-    width: 20% !important;
-    opacity: 1 !important;
+  .slide-final p {
+    color: #555 !important;
   }
-  .bar-row[data-w="5"] .bar-fill {
-    width: 5% !important;
-    opacity: 1 !important;
+
+  /* 8g. CHIPS E BADGES viram texto puro */
+  .topic-chip,
+  .tool-chip,
+  .sec-chip,
+  .ai-tag,
+  .demand,
+  .badge,
+  .aula-badge {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 9pt !important;
+    color: #555 !important;
+    display: inline !important;
   }
-  .bar-row[data-label] .bar-fill::after {
-    content: attr(data-label);
-    position: absolute;
-    margin-left: 10px;
-    color: #000 !important;
-    font-weight: bold;
-    font-size: 10pt !important;
+  .topic-chip::after,
+  .tool-chip::after,
+  .sec-chip::after {
+    content: " · ";
+  }
+
+  /* 8h. HEADLINE (itálico de manchete) */
+  .headline {
+    border: none !important;
+    border-left: 2px solid #d94f1e !important;
+    background: none !important;
+    padding: 2pt 0 2pt 8pt !important;
+    font-size: 9.5pt !important;
+    color: #555 !important;
+    font-style: italic !important;
+    margin-top: 3pt !important;
+    display: block !important;
+  }
+
+  /* 9. UTILITÁRIOS */
+  * {
+    text-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
